@@ -1,0 +1,32 @@
+appId: site.roychen.deepseek-desktop
+productName: DeepSeek Desktop
+copyright: Copyright © 2026 Roy Chen
+directories:
+  output: dist
+files:
+  - build/**
+  - resources/**
+  - package.json
+extraResources:
+  - resources/**
+mac:
+  category: public.app-category.productivity
+  icon: resources/icon.icns
+  target:
+    - dmg
+  arch:
+    - x64
+    - arm64
+  darkModeSupport: true
+win:
+  icon: resources/icon.ico
+  target:
+    - nsis
+  arch:
+    - x64
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: always
+dmg:
+  sign: false
