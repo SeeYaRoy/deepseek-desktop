@@ -1,5 +1,6 @@
 import { BrowserWindow, app } from 'electron'
 import { join } from 'path'
+import * as fs from 'fs'
 import {
   APP_NAME,
   CHAT_URL,
@@ -32,6 +33,14 @@ export function createMainWindow(): BrowserWindow {
   })
 
   mainWindow.loadURL(CHAT_URL)
+
+  mainWindow.webContents.on('dom-ready', () => {
+    const injectPath = join(app.getAppPath(), 'build/renderer/inject.js')
+    if (fs.existsSync(injectPath)) {
+      const script = fs.readFileSync(injectPath, 'utf-8')
+      mainWindow?.webContents.executeJavaScript(script).catch(() => {})
+    }
+  })
 
   mainWindow.once('ready-to-show', () => {
     mainWindow?.show()
