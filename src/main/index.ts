@@ -1,5 +1,5 @@
 import { app } from 'electron'
-import { createMainWindow, showMainWindow } from './window'
+import { createMainWindow, showMainWindow, setIsQuitting } from './window'
 import { createTray } from './tray'
 import { registerGlobalShortcuts, unregisterGlobalShortcuts } from './shortcuts'
 import { setupNotifications, clearBadge } from './notifications'
@@ -35,6 +35,10 @@ app.on('window-all-closed', () => {
 
 app.on('activate', () => {
   showMainWindow()
+})
+
+app.on('before-quit', () => {
+  setIsQuitting(true)
 })
 
 app.on('will-quit', () => {

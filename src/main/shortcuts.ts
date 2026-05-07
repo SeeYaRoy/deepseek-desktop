@@ -3,11 +3,11 @@ import { SHORTCUTS } from './constants'
 import { toggleMainWindow, showMainWindow, getMainWindow } from './window'
 
 export function registerGlobalShortcuts(): void {
-  globalShortcut.register(SHORTCUTS.TOGGLE_WINDOW, () => {
+  const toggleOk = globalShortcut.register(SHORTCUTS.TOGGLE_WINDOW, () => {
     toggleMainWindow()
   })
 
-  globalShortcut.register(SHORTCUTS.NEW_CONVERSATION, () => {
+  const newOk = globalShortcut.register(SHORTCUTS.NEW_CONVERSATION, () => {
     const win = getMainWindow()
     if (win) {
       win.webContents.executeJavaScript(`
@@ -20,7 +20,7 @@ export function registerGlobalShortcuts(): void {
     showMainWindow()
   })
 
-  globalShortcut.register(SHORTCUTS.DELETE_CONVERSATION, () => {
+  const delOk = globalShortcut.register(SHORTCUTS.DELETE_CONVERSATION, () => {
     const win = getMainWindow()
     if (win) {
       win.webContents.executeJavaScript(`
@@ -31,6 +31,8 @@ export function registerGlobalShortcuts(): void {
     }
     showMainWindow()
   })
+
+  console.log('[Shortcuts] Registered:', { toggle: toggleOk, newConversation: newOk, deleteConversation: delOk })
 }
 
 export function unregisterGlobalShortcuts(): void {

@@ -12,6 +12,11 @@ import {
 } from './constants'
 
 let mainWindow: BrowserWindow | null = null
+let isQuitting = false
+
+export function setIsQuitting(value: boolean): void {
+  isQuitting = value
+}
 
 export function getMainWindow(): BrowserWindow | null {
   return mainWindow
@@ -56,7 +61,7 @@ export function createMainWindow(): BrowserWindow {
   mainWindow.on('move', saveBounds)
 
   mainWindow.on('close', (event) => {
-    if (process.platform === 'darwin') {
+    if (process.platform === 'darwin' && !isQuitting) {
       event.preventDefault()
       mainWindow?.hide()
     }
