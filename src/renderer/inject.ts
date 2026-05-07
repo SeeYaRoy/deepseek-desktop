@@ -25,8 +25,7 @@ function initMessageObserver(): void {
     if ((textGrew || titleChanged) && lastText.length > 0) {
       if (notificationTimer) clearTimeout(notificationTimer)
       notificationTimer = setTimeout(() => {
-        const lastLine = currentText.slice(-120).trim().replace(/\s+/g, ' ')
-        window.electronAPI?.notify('DeepSeek', lastLine || 'New message')
+        window.electronAPI?.notify('DeepSeek', 'new-reply')
       }, 1200)
     }
 
