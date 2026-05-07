@@ -1,12 +1,25 @@
 import { Tray, Menu, nativeImage, app } from 'electron'
-import { join } from 'path'
+import { join, resolve } from 'path'
+import * as fs from 'fs'
 import { APP_NAME } from './constants'
 import { showMainWindow, getMainWindow } from './window'
+
+function getResourcePath(...parts: string[]): string {
+  const candidates = [
+    join(process.resourcesPath, 'resources', ...parts),
+    join(app.getAppPath(), 'resources', ...parts),
+    resolve(__dirname, '../../resources', ...parts),
+  ]
+  for (const p of candidates) {
+    if (fs.existsSync(p)) return p
+  }
+  return candidates[0]
+}
 
 let tray: Tray | null = null
 
 export function createTray(): Tray {
-  const iconPath = join(app.getAppPath(), 'resources', 'iconTemplate.png')
+  const iconPath = getResourcePath('iconTemplate.png')
   const icon = nativeImage.createFromPath(iconPath)
 
   if (process.platform === 'darwin') {
