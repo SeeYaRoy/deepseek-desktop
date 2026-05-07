@@ -1,0 +1,70 @@
+import { BrowserWindow, app } from 'electron'
+import { join } from 'path'
+import {
+  APP_NAME,
+  CHAT_URL,
+  DEFAULT_WINDOW_WIDTH,
+  DEFAULT_WINDOW_HEIGHT,
+  MIN_WINDOW_WIDTH,
+  MIN_WINDOW_HEIGHT
+} from './constants'
+
+let mainWindow: BrowserWindow | null = null
+
+export function getMainWindow(): BrowserWindow | null {
+  return mainWindow
+}
+
+export function createMainWindow(): BrowserWindow {
+  mainWindow = new BrowserWindow({
+    title: APP_NAME,
+    width: DEFAULT_WINDOW_WIDTH,
+    height: DEFAULT_WINDOW_HEIGHT,
+    minWidth: MIN_WINDOW_WIDTH,
+    minHeight: MIN_WINDOW_HEIGHT,
+    show: false,
+    webPreferences: {
+      preload: join(app.getAppPath(), 'build/preload/index.js'),
+      contextIsolation: true,
+      nodeIntegration: false,
+      sandbox: true
+    }
+  })
+
+  mainWindow.loadURL(CHAT_URL)
+
+  mainWindow.once('ready-to-show', () => {
+    mainWindow?.show()
+    mainWindow?.focus()
+  })
+
+  mainWindow.on('closed', () => {
+    mainWindow = null
+  })
+
+  return mainWindow
+}
+
+export function showMainWindow(): void {
+  const win = getMainWindow()
+  if (win) {
+    if (win.isMinimized()) win.restore()
+    win.show()
+    win.focus()
+  } else {
+    createMainWindow()
+  }
+}
+
+export function toggleMainWindow(): void {
+  const win = getMainWindow()
+  if (!win) {
+    createMainWindow()
+    return
+  }
+  if (win.isVisible() && win.isFocused()) {
+    win.hide()
+  } else {
+    showMainWindow()
+  }
+}
