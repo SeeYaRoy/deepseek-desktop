@@ -14,16 +14,11 @@ mac:
   icon: resources/icon.icns
   target:
     - dmg
-  arch:
-    - x64
-    - arm64
   darkModeSupport: true
 win:
   icon: resources/icon.ico
   target:
     - nsis
-  arch:
-    - x64
 nsis:
   oneClick: false
   allowToChangeInstallationDirectory: true
