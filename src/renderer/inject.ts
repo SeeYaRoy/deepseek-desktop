@@ -22,33 +22,45 @@ function initMessageObserver(): void {
     }
   })
 
-  let lastMessageCount = 0
+  let lastText = ''
   let notificationTimer: ReturnType<typeof setTimeout> | null = null
+  let pageTitle = document.title
 
-  const checkNewMessages = (): void => {
-    const messages = document.querySelectorAll('[data-testid="chat-message"], .ds-message, .message-item')
-    const currentCount = messages.length
+  const notifyIfNewMessage = (): void => {
+    // Detect new messages by watching title changes or DOM content growth
+    const currentTitle = document.title
+    const hasNewIndicator = document.title.includes('(') || document.title !== pageTitle
 
-    if (currentCount > lastMessageCount && lastMessageCount > 0) {
+    // Also check if new content appeared in the chat area
+    const chatArea = document.querySelector('main') || document.body
+    const currentText = chatArea.textContent || ''
+
+    const textChanged = currentText.length > lastText.length + 20
+    const titleChanged = currentTitle !== pageTitle
+
+    if ((textChanged || titleChanged) && lastText.length > 0) {
       if (notificationTimer) clearTimeout(notificationTimer)
       notificationTimer = setTimeout(() => {
-        const lastMsg = messages[messages.length - 1]
-        const text = lastMsg?.textContent?.slice(0, 100) || 'New message'
-        window.electronAPI?.notify('DeepSeek', text)
-      }, 2000)
+        // Only notify if window is not focused
+        if (!document.hasFocus()) {
+          const lastLine = currentText.slice(-100).trim()
+          window.electronAPI?.notify('DeepSeek', lastLine || 'New message')
+        }
+      }, 1500)
     }
 
-    lastMessageCount = currentCount
+    lastText = currentText
+    pageTitle = currentTitle
   }
 
   const observer = new MutationObserver(() => {
-    checkNewMessages()
+    notifyIfNewMessage()
   })
 
   const chatContainer = document.querySelector('main') || document.body
-  observer.observe(chatContainer, { childList: true, subtree: true })
+  observer.observe(chatContainer, { childList: true, subtree: true, characterData: true })
 
-  setInterval(checkNewMessages, 3000)
+  setInterval(notifyIfNewMessage, 2000)
 }
 
 if (document.readyState === 'loading') {
