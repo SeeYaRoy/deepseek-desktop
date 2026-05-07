@@ -38,8 +38,7 @@ export function setupNotifications(): void {
     if (Notification.isSupported()) {
       const notification = new Notification({
         title: title || APP_NAME,
-        body: t('replyReceived'),
-        silent: true
+        body: t('replyReceived')
       })
       notification.on('click', () => {
         showMainWindow()
