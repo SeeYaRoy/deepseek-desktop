@@ -7,8 +7,9 @@ import { registerGlobalShortcuts, unregisterGlobalShortcuts } from './shortcuts'
 import { setupNotifications, clearBadge } from './notifications'
 import { closeCache } from './cache'
 
-function getResourcePath(...parts: string[]): string {
+function getResourcePath(...parts: string[]): string | undefined {
   const candidates = [
+    join(process.cwd(), 'resources', ...parts),
     join(process.resourcesPath, 'resources', ...parts),
     join(app.getAppPath(), 'resources', ...parts),
     resolve(__dirname, '../../resources', ...parts),
@@ -16,7 +17,8 @@ function getResourcePath(...parts: string[]): string {
   for (const p of candidates) {
     if (fs.existsSync(p)) return p
   }
-  return candidates[0]
+  console.warn('[Main] Resource not found:', parts, 'tried:', candidates)
+  return undefined
 }
 
 const gotTheLock = app.requestSingleInstanceLock()
@@ -33,7 +35,7 @@ app.on('second-instance', () => {
 app.whenReady().then(() => {
   if (process.platform === 'darwin') {
     const dockIconPath = getResourcePath('icon.png')
-    if (fs.existsSync(dockIconPath)) {
+    if (dockIconPath) {
       app.dock.setIcon(nativeImage.createFromPath(dockIconPath))
     }
   }

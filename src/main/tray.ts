@@ -4,8 +4,9 @@ import * as fs from 'fs'
 import { APP_NAME } from './constants'
 import { showMainWindow, getMainWindow } from './window'
 
-function getResourcePath(...parts: string[]): string {
+function getResourcePath(...parts: string[]): string | undefined {
   const candidates = [
+    join(process.cwd(), 'resources', ...parts),
     join(process.resourcesPath, 'resources', ...parts),
     join(app.getAppPath(), 'resources', ...parts),
     resolve(__dirname, '../../resources', ...parts),
@@ -13,13 +14,19 @@ function getResourcePath(...parts: string[]): string {
   for (const p of candidates) {
     if (fs.existsSync(p)) return p
   }
-  return candidates[0]
+  console.warn('[Tray] Resource not found:', parts, 'tried:', candidates)
+  return undefined
 }
 
 let tray: Tray | null = null
 
-export function createTray(): Tray {
+export function createTray(): Tray | null {
   const iconPath = getResourcePath('iconTemplate.png')
+  if (!iconPath) {
+    console.warn('[Tray] Skipping tray creation: icon not found')
+    return null
+  }
+
   const icon = nativeImage.createFromPath(iconPath)
 
   if (process.platform === 'darwin') {
