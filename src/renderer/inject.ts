@@ -19,14 +19,21 @@ function initMessageObserver(): void {
     const chatArea = document.querySelector('main') || document.body
     const currentText = chatArea.textContent || ''
 
-    const textGrew = currentText.length > lastText.length + 10
+    const textGrowth = currentText.length - lastText.length
     const titleChanged = currentTitle !== pageTitle && pageTitle !== ''
 
-    if ((textGrew || titleChanged) && lastText.length > 0) {
+    // Only trigger on significant text growth (AI reply, not button clicks)
+    const significantGrowth = textGrowth > 80
+
+    if ((significantGrowth || titleChanged) && lastText.length > 0) {
       if (notificationTimer) clearTimeout(notificationTimer)
       notificationTimer = setTimeout(() => {
-        window.electronAPI?.notify('DeepSeek', 'new-reply')
-      }, 1200)
+        // Double-check: must still have grown significantly after debounce
+        const nowText = (document.querySelector('main') || document.body).textContent || ''
+        if (nowText.length - lastText.length > 50) {
+          window.electronAPI?.notify('DeepSeek', 'new-reply')
+        }
+      }, 5000)
     }
 
     lastText = currentText
