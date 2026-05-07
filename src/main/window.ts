@@ -1,6 +1,7 @@
 import { BrowserWindow, app } from 'electron'
 import { join } from 'path'
 import * as fs from 'fs'
+import store from './store'
 import {
   APP_NAME,
   CHAT_URL,
@@ -17,10 +18,13 @@ export function getMainWindow(): BrowserWindow | null {
 }
 
 export function createMainWindow(): BrowserWindow {
+  const bounds = store.get('windowBounds')
   mainWindow = new BrowserWindow({
     title: APP_NAME,
-    width: DEFAULT_WINDOW_WIDTH,
-    height: DEFAULT_WINDOW_HEIGHT,
+    width: bounds.width,
+    height: bounds.height,
+    x: bounds.x,
+    y: bounds.y,
     minWidth: MIN_WINDOW_WIDTH,
     minHeight: MIN_WINDOW_HEIGHT,
     show: false,
@@ -39,6 +43,22 @@ export function createMainWindow(): BrowserWindow {
     if (fs.existsSync(injectPath)) {
       const script = fs.readFileSync(injectPath, 'utf-8')
       mainWindow?.webContents.executeJavaScript(script).catch(() => {})
+    }
+  })
+
+  const saveBounds = () => {
+    const b = mainWindow?.getBounds()
+    if (b) {
+      store.set('windowBounds', { width: b.width, height: b.height, x: b.x, y: b.y })
+    }
+  }
+  mainWindow.on('resize', saveBounds)
+  mainWindow.on('move', saveBounds)
+
+  mainWindow.on('close', (event) => {
+    if (process.platform === 'darwin') {
+      event.preventDefault()
+      mainWindow?.hide()
     }
   })
 
