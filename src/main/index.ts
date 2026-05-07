@@ -1,5 +1,8 @@
 import { app } from 'electron'
 import { createMainWindow, showMainWindow } from './window'
+import { createTray } from './tray'
+import { registerGlobalShortcuts, unregisterGlobalShortcuts } from './shortcuts'
+import { setupNotifications, clearBadge } from './notifications'
 
 const gotTheLock = app.requestSingleInstanceLock()
 
@@ -13,7 +16,14 @@ app.on('second-instance', () => {
 })
 
 app.whenReady().then(() => {
-  createMainWindow()
+  const win = createMainWindow()
+  createTray()
+  registerGlobalShortcuts()
+  setupNotifications()
+
+  win.on('focus', () => {
+    clearBadge()
+  })
 })
 
 app.on('window-all-closed', () => {
@@ -24,4 +34,8 @@ app.on('window-all-closed', () => {
 
 app.on('activate', () => {
   showMainWindow()
+})
+
+app.on('will-quit', () => {
+  unregisterGlobalShortcuts()
 })
