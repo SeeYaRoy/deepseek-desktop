@@ -29,18 +29,15 @@ export default defineConfig({
   },
   renderer: {
     build: {
-      lib: {
-        entry: resolve('src/renderer/inject.ts'),
-        formats: ['iife'],
-        name: 'DeepSeekInject',
-        fileName: () => 'inject.js'
-      },
-      outDir: 'build/renderer',
       rollupOptions: {
+        input: resolve('src/renderer/inject.ts'),
         output: {
-          inlineDynamicImports: true
+          format: 'iife',
+          inlineDynamicImports: true,
+          entryFileNames: 'inject.js'
         }
-      }
+      },
+      outDir: 'build/renderer'
     }
   }
 })
