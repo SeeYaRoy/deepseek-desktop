@@ -3,6 +3,7 @@ import { createMainWindow, showMainWindow } from './window'
 import { createTray } from './tray'
 import { registerGlobalShortcuts, unregisterGlobalShortcuts } from './shortcuts'
 import { setupNotifications, clearBadge } from './notifications'
+import { closeCache } from './cache'
 
 const gotTheLock = app.requestSingleInstanceLock()
 
@@ -38,4 +39,8 @@ app.on('activate', () => {
 
 app.on('will-quit', () => {
   unregisterGlobalShortcuts()
+})
+
+app.on('quit', () => {
+  closeCache()
 })
