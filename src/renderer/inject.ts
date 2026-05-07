@@ -10,18 +10,6 @@ declare const window: Window & {
 function initMessageObserver(): void {
   if (!window.electronAPI) return
 
-  window.electronAPI.onShortcut((action) => {
-    if (action === 'NEW_CONVERSATION') {
-      const btn =
-        document.querySelector('[data-testid="new-conversation-button"]') ||
-        document.querySelector('button[title*="New"]') ||
-        Array.from(document.querySelectorAll('button')).find((b) =>
-          b.textContent?.includes('New Chat')
-        )
-      ;(btn as HTMLElement)?.click()
-    }
-  })
-
   let lastText = ''
   let notificationTimer: ReturnType<typeof setTimeout> | null = null
   let pageTitle = document.title

@@ -10,7 +10,7 @@ export function setupNotifications(): void {
       const notification = new Notification({
         title: title || APP_NAME,
         body,
-        silent: false
+        silent: true
       })
       notification.on('click', () => {
         showMainWindow()
