@@ -1,25 +1,9 @@
-import { app, nativeImage } from 'electron'
-import { join, resolve } from 'path'
-import * as fs from 'fs'
+import { app } from 'electron'
 import { createMainWindow, showMainWindow, setIsQuitting } from './window'
 import { createTray } from './tray'
 import { registerGlobalShortcuts, unregisterGlobalShortcuts } from './shortcuts'
 import { setupNotifications, clearBadge } from './notifications'
 import { closeCache } from './cache'
-
-function getResourcePath(...parts: string[]): string | undefined {
-  const candidates = [
-    join(process.cwd(), 'resources', ...parts),
-    join(process.resourcesPath, 'resources', ...parts),
-    join(app.getAppPath(), 'resources', ...parts),
-    resolve(__dirname, '../../resources', ...parts),
-  ]
-  for (const p of candidates) {
-    if (fs.existsSync(p)) return p
-  }
-  console.warn('[Main] Resource not found:', parts, 'tried:', candidates)
-  return undefined
-}
 
 const gotTheLock = app.requestSingleInstanceLock()
 
@@ -33,13 +17,6 @@ app.on('second-instance', () => {
 })
 
 app.whenReady().then(() => {
-  if (process.platform === 'darwin') {
-    const dockIconPath = getResourcePath('icon.png')
-    if (dockIconPath) {
-      app.dock.setIcon(nativeImage.createFromPath(dockIconPath))
-    }
-  }
-
   const win = createMainWindow()
   createTray()
   registerGlobalShortcuts()
