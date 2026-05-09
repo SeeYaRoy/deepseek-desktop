@@ -42,6 +42,10 @@ export function createMainWindow(): BrowserWindow {
     }
   })
 
+  // Mask as regular Chrome to avoid "unusual device" warnings from DeepSeek
+  const originalUA = mainWindow.webContents.getUserAgent()
+  mainWindow.webContents.setUserAgent(originalUA.replace(/Electron\/[\d.]+ /, ''))
+
   mainWindow.loadURL(CHAT_URL)
 
   mainWindow.webContents.on('dom-ready', () => {
