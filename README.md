@@ -4,7 +4,7 @@
 
 An unofficial desktop client for [DeepSeek Chat](https://chat.deepseek.com), built with Electron. Supports macOS and Windows.
 
-![DeepSeek Desktop](resources/logo.svg)
+![DeepSeek Desktop](resources/example_image.png)
 
 ## Features
 

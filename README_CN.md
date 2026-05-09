@@ -4,7 +4,7 @@
 
 DeepSeek Chat 的非官方桌面客户端，基于 Electron 构建，支持 macOS 和 Windows。
 
-![DeepSeek Desktop](resources/logo.svg)
+![DeepSeek Desktop](resources/example_image.png)
 
 ## 功能
 
