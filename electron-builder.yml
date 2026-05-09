@@ -1,6 +1,7 @@
 appId: site.roychen.deepseek-desktop
 productName: DeepSeek Desktop
 copyright: Copyright © 2026 Roy Chen
+publish: null
 directories:
   output: dist
 files:
