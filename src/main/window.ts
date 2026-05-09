@@ -33,6 +33,7 @@ export function createMainWindow(): BrowserWindow {
     minWidth: MIN_WINDOW_WIDTH,
     minHeight: MIN_WINDOW_HEIGHT,
     show: false,
+    autoHideMenuBar: true,
     webPreferences: {
       preload: join(app.getAppPath(), 'build/preload/index.js'),
       contextIsolation: true,
