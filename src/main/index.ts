@@ -1,9 +1,14 @@
 import { app } from 'electron'
+import { BUNDLE_ID } from './constants'
 import { createMainWindow, showMainWindow, setIsQuitting } from './window'
 import { createTray } from './tray'
 import { registerGlobalShortcuts, unregisterGlobalShortcuts } from './shortcuts'
 import { setupNotifications, clearBadge } from './notifications'
 import { closeCache } from './cache'
+
+if (process.platform === 'win32') {
+  app.setAppUserModelId(BUNDLE_ID)
+}
 
 const gotTheLock = app.requestSingleInstanceLock()
 
