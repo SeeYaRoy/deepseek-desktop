@@ -21,7 +21,9 @@ function getResourcePath(...parts: string[]): string | undefined {
 let tray: Tray | null = null
 
 export function createTray(): Tray | null {
-  const iconPath = getResourcePath('iconTemplate.png')
+  // macOS uses template image (auto-tinted by system), Windows uses ICO for proper display
+  const isMac = process.platform === 'darwin'
+  const iconPath = getResourcePath(isMac ? 'iconTemplate.png' : 'icon.ico')
   if (!iconPath) {
     console.warn('[Tray] Skipping tray creation: icon not found')
     return null
@@ -29,7 +31,7 @@ export function createTray(): Tray | null {
 
   const icon = nativeImage.createFromPath(iconPath)
 
-  if (process.platform === 'darwin') {
+  if (isMac) {
     icon.setTemplateImage(true)
   }
 
